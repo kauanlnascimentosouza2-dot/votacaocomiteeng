@@ -2,7 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart3, CalendarDays, Check, ChevronRight, CircleUserRound, Clock3, FileText, LogOut, Plus, Settings2, ShieldCheck, Users, Vote } from "lucide-react";
+import { BarChart3, CalendarDays, Check, ChevronRight, CircleUserRound, Clock3, FileText, LogOut, Plus, Settings2, ShieldCheck, Users, Vote, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type Proposal = { id: string; title: string; description: string; image_url: string | null; accent: string };
@@ -20,6 +20,7 @@ export default function VotingClient({ initialState }: { initialState: AppState 
   const state = { ...initialState, proposals: initialState.proposals as unknown as Proposal[] };
   const [tab, setTab] = useState<"voting" | "admin">("voting");
   const [selected, setSelected] = useState<Proposal | null>(null);
+  const [previewImage, setPreviewImage] = useState<Proposal | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const router = useRouter();
@@ -63,12 +64,13 @@ export default function VotingClient({ initialState }: { initialState: AppState 
           {state.myVote && <div className="success-banner"><span><Check/></span><div><strong>Seu voto foi registrado</strong><p>A escolha não pode ser alterada nesta votação.</p></div></div>}
           <section className="proposal-grid">{state.proposals.map((proposal, index) => {
             const chosen = String(state.myVote?.proposal_id ?? "") === proposal.id;
-            return <article className={`proposal-card ${chosen ? "chosen" : ""}`} key={proposal.id}><div className={`proposal-media ${proposal.accent}`}>{proposal.image_url ? <img src={proposal.image_url} alt=""/> : <FileText/>}<span>Proposta {String(index + 1).padStart(2, "0")}</span></div><div className="proposal-copy"><h2>{proposal.title}</h2><p>{proposal.description}</p><button disabled={Boolean(state.myVote)} onClick={() => setSelected(proposal)} className={chosen ? "chosen-button" : "card-button"}>{chosen ? <><Check/>Sua escolha</> : <>Selecionar proposta<ChevronRight/></>}</button></div></article>;
+            return <article className={`proposal-card ${chosen ? "chosen" : ""}`} key={proposal.id}><div className={`proposal-media ${proposal.accent}`}>{proposal.image_url ? <button type="button" className="proposal-image-button" onClick={() => setPreviewImage(proposal)} aria-label={`Ampliar imagem de ${proposal.title}`}><img src={proposal.image_url} alt={proposal.title}/></button> : <FileText/>}<span>Proposta {String(index + 1).padStart(2, "0")}</span></div><div className="proposal-copy"><h2>{proposal.title}</h2><p>{proposal.description}</p><button disabled={Boolean(state.myVote)} onClick={() => setSelected(proposal)} className={chosen ? "chosen-button" : "card-button"}>{chosen ? <><Check/>Sua escolha</> : <>Selecionar proposta<ChevronRight/></>}</button></div></article>;
           })}</section>
           <p className="privacy-note"><ShieldCheck/>O administrador poderá consultar a autoria dos votos.</p>
         </> : <AdminPanel state={state} totalVotes={totalVotes} busy={busy} onAdd={addProposal}/>} 
       </main>
 
+      {previewImage?.image_url && <div className="image-preview-backdrop" onMouseDown={() => setPreviewImage(null)}><section className="image-preview" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={`Imagem ampliada de ${previewImage.title}`}><button type="button" className="image-preview-close" onClick={() => setPreviewImage(null)} aria-label="Fechar imagem"><X/></button><img src={previewImage.image_url} alt={previewImage.title}/><div><strong>{previewImage.title}</strong><span>Clique fora da imagem para fechar</span></div></section></div>}
       {selected && <div className="modal-backdrop" onMouseDown={() => setSelected(null)}><section className="modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="confirm-title"><h2 id="confirm-title">Confirmar seu voto?</h2><p>Você está escolhendo <strong>{selected.title}</strong>. Depois de confirmar, o voto não poderá ser alterado.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setSelected(null)}>Voltar</button><button className="primary-button" onClick={vote} disabled={busy}>{busy ? "Registrando…" : "Confirmar voto"}</button></div></section></div>}
     </div>
   );
