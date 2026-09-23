@@ -35,7 +35,7 @@ export default function LoginForm() {
   return (
     <main className="login-shell">
       <section className="login-card">
-        <div className="brand-mark">VC</div>
+        <div className="brand-logo"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div>
         <p className="eyebrow">Comitê de Engenharia</p>
         <h1>votacaocomiteeng</h1>
         <p className="login-copy">Entre para consultar as propostas e registrar seu voto.</p>
