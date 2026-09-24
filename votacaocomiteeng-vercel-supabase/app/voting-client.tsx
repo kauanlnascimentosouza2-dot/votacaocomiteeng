@@ -51,11 +51,11 @@ export default function VotingClient({ initialState }: { initialState: AppState 
     router.push("/login"); router.refresh();
   }
 
-  if (!state.poll) return <main className="empty-state"><div className="brand-mark">VC</div><h1>Não há votação aberta</h1><button className="text-button" onClick={signOut}>Sair</button></main>;
+  if (!state.poll) return <main className="empty-state"><div className="brand-logo"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div><h1>Não há votação aberta</h1><button className="text-button" onClick={signOut}>Sair</button></main>;
 
   return (
     <div className="app-shell">
-      <header className="topbar"><div className="topbar-inner"><div className="brand"><div className="brand-mark small">VC</div><div><strong>votacaocomiteeng</strong><span>Comitê de Engenharia</span></div></div><div className="user-area"><div><strong>{state.user.name}</strong><span>{state.user.isAdmin ? "Administrador" : "Participante"}</span></div><CircleUserRound/><button className="icon-button" onClick={signOut} aria-label="Sair"><LogOut/></button></div></div></header>
+      <header className="topbar"><div className="topbar-inner"><div className="brand"><div className="brand-logo small"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div><div><strong>votacaocomiteeng</strong><span>Comitê de Engenharia</span></div></div><div className="user-area"><div><strong>{state.user.name}</strong><span>{state.user.isAdmin ? "Administrador" : "Participante"}</span></div><CircleUserRound/><button className="icon-button" onClick={signOut} aria-label="Sair"><LogOut/></button></div></div></header>
       <main className="workspace">
         <section className="page-heading"><div><div className="status-line"><span className="status-pill">Votação aberta</span><span><Clock3/> {state.poll.ends_at ? `Encerra em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date(state.poll.ends_at))}` : "Sem prazo definido"}</span></div><h1>{state.poll.title}</h1><p>{state.poll.description}</p></div>{state.user.isAdmin && <nav className="tabs"><button className={tab === "voting" ? "active" : ""} onClick={() => setTab("voting")}><Vote/>Votação</button><button className={tab === "admin" ? "active" : ""} onClick={() => setTab("admin")}><Settings2/>Painel admin</button></nav>}</section>
         {notice && <div className="notice" role="status">{notice}</div>}
