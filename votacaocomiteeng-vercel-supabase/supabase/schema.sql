@@ -38,6 +38,12 @@ create table if not exists public.votes (
   constraint votes_one_per_poll unique (poll_id, user_id)
 );
 
+create table if not exists public.admins (
+  email text primary key check (email = lower(trim(email))),
+  created_by text not null default '',
+  created_at timestamptz not null default now()
+);
+
 create index if not exists idx_proposals_poll on public.proposals(poll_id);
 create index if not exists idx_votes_poll on public.votes(poll_id);
 create index if not exists idx_votes_proposal on public.votes(proposal_id);
@@ -68,6 +74,7 @@ alter table public.profiles enable row level security;
 alter table public.polls enable row level security;
 alter table public.proposals enable row level security;
 alter table public.votes enable row level security;
+alter table public.admins enable row level security;
 
 drop policy if exists "Usuário consulta o próprio perfil" on public.profiles;
 create policy "Usuário consulta o próprio perfil"

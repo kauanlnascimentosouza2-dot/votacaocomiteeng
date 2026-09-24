@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Faça login para continuar." }, { status: 401 });
-  if (!isAdmin(user)) return NextResponse.json({ error: "Acesso exclusivo do administrador." }, { status: 403 });
+  if (!(await isAdmin(user))) return NextResponse.json({ error: "Acesso exclusivo do administrador." }, { status: 403 });
 
   const form = await request.formData();
   const title = String(form.get("title") ?? "").trim();
