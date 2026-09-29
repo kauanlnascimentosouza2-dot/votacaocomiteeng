@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, FolderKanban, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserRound, UsersRound, Vote, X } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Clapperboard, FolderKanban, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserRound, UsersRound, Vote, X } from "lucide-react";
 
 type SidebarUser = { name: string; email: string; isAdmin: boolean; avatarUrl?: string | null; hasActiveGroup?: boolean };
 
 const primaryItems = [
   { href: "/workspace", label: "Área do grupo", icon: FolderKanban },
+  { href: "/lessons", label: "Aulas", icon: Clapperboard },
   { href: "/calendar", label: "Cronograma", icon: CalendarDays },
   { href: "/", label: "Votação", icon: Vote },
   { href: "/community", label: "Nós", icon: UsersRound },

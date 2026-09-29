@@ -350,6 +350,7 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 .sidebar-nav span { min-width:0; overflow:hidden; white-space:nowrap; opacity:0; transition:opacity .15s; }
 .app-sidebar.expanded .sidebar-nav span { opacity:1; }
 .app-sidebar:not(.expanded) .sidebar-nav span,.app-sidebar:not(.expanded) .sidebar-submenu { display:none; }
+.app-sidebar.expanded .sidebar-nav { min-height:0; overflow-y:auto; }
 @media (max-width:700px) { .app-sidebar.mobile-open:not(.expanded) .sidebar-nav span { display:block; } .app-sidebar.mobile-open:not(.expanded) .sidebar-submenu { display:grid; } }
 .sidebar-admin>button { width:100%; }
 .submenu-arrow { width:14px!important; margin-left:auto; opacity:0; }
@@ -480,3 +481,54 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 @media (max-width:700px) { .app-content { margin-left:0; padding-top:58px; }.sidebar-mobile-trigger { width:42px; height:42px; position:fixed; z-index:59; top:9px; left:10px; border:0; border-radius:10px; display:grid; place-items:center; color:#fff; background:#11161c; }.sidebar-mobile-trigger svg { width:21px; }.sidebar-mobile-shade { position:fixed; z-index:61; inset:0; border:0; display:block; background:#02061799; }.app-sidebar { z-index:62; width:272px; transform:translateX(-100%); }.app-sidebar.mobile-open { transform:translateX(0); }.app-sidebar .sidebar-brand span,.app-sidebar .sidebar-nav span,.app-sidebar .sidebar-account>a>div { opacity:1; }.app-sidebar .sidebar-expand { display:none; }.sidebar-mobile-close { width:32px; height:32px; margin-left:auto; border:0; border-radius:8px; display:grid; place-items:center; color:#fff; background:#ffffff12; }.sidebar-mobile-close svg { width:17px; }.submenu-arrow { opacity:1; }.sidebar-account button span { display:block; }.app-sidebar [data-tooltip]::after { display:none!important; }.feature-page { width:calc(100% - 28px); padding-top:24px; }.feature-heading { align-items:stretch; flex-direction:column; }.profile-fields,.person-admin-card form { grid-template-columns:1fr; }.full-field,.person-admin-card form button { grid-column:auto; }.calendar-panel { padding:10px; overflow-x:auto; }.calendar-weekdays,.calendar-grid { min-width:650px; }.community-layout { grid-template-columns:1fr; }.community-layout>aside { position:static; }.edition-picker { min-width:0; }.review-card { grid-template-columns:1fr; }.review-card>img { min-height:200px; max-height:270px; }.moderation-grid { grid-template-columns:1fr; } }
 
 @media (max-width:620px) { .topbar-inner,.workspace { width:min(100% - 28px,1240px); } .brand-logo.small { width:92px; height:38px; } .brand>div:last-child { display:none; } .user-area>div,.user-area>svg { display:none; } .portal-link { font-size:0; } .portal-link::after { content:"Projetos"; font-size:.75rem; } .proposal-grid,.stats,.admin-callout-grid,.workspace-project-grid { grid-template-columns:1fr; } .proposal-copy p { min-height:0; } .tabs { width:100%; } .tabs button { flex:1; } .status-line { align-items:flex-start; flex-direction:column; } .modal-actions,.form-actions,.panel-title-actions { align-items:stretch; flex-direction:column-reverse; } .modal-actions button,.form-actions button,.panel-title-actions button { width:100%; } .inline-form,.date-grid,.step-row,.group-checks { grid-template-columns:1fr; } .image-preview>div { align-items:flex-start; flex-direction:column; } .login-card { padding:28px 22px; } th,td { padding-left:16px; padding-right:16px; } .portal-header { padding:10px 14px; } .portal-header nav>span,.portal-header nav>a { display:none; } .portal-main,.project-editor-main { width:calc(100% - 28px); padding-top:24px; } .portal-heading,.project-editor-heading { align-items:stretch; flex-direction:column; } .deadline-card { min-width:0; } }
+
+/* Biblioteca de aulas */
+.lessons-layout { display:grid; grid-template-columns:275px minmax(0,1fr); gap:20px; align-items:start; }
+.lessons-sidebar { position:sticky; top:22px; padding:17px 12px; }
+.lessons-sidebar-heading { display:flex; align-items:center; justify-content:space-between; padding:0 7px 12px; }
+.lessons-sidebar-heading h2 { margin:0; font-size:1rem; }
+.lessons-sidebar-heading button { width:34px; height:34px; border:1px solid var(--line); border-radius:9px; display:grid; place-items:center; color:var(--navy); background:#fff; }
+.lesson-folder-tree { display:grid; gap:2px; }
+.lesson-folder-tree>p { margin:10px 8px; color:var(--muted); font-size:.83rem; }
+.lesson-folder-item { width:100%; min-height:40px; padding-right:9px; border:0; border-radius:9px; display:flex; align-items:center; gap:8px; text-align:left; color:#334155; background:transparent; }
+.lesson-folder-item:hover,.lesson-folder-item.selected { color:var(--navy); background:#eaf2f8; }
+.lesson-folder-item.selected { box-shadow:inset 3px 0 var(--orange); font-weight:800; }
+.lesson-folder-item.archived { opacity:.55; }
+.lesson-folder-item svg { flex:0 0 auto; }
+.lesson-folder-item span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; font-size:.83rem; }
+.lesson-folder-item small { color:var(--muted); font-size:.7rem; }
+.lesson-folder-form { display:grid; gap:12px; padding:12px 7px 18px; border-bottom:1px solid var(--line); margin-bottom:12px; }
+.lesson-folder-form textarea { min-height:60px; }
+.lessons-main { min-width:0; display:grid; gap:16px; }
+.lessons-folder-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.lessons-folder-heading h2 { margin:4px 0; font-size:1.6rem; }
+.lessons-folder-heading p { margin:4px 0 0; color:var(--muted); white-space:pre-wrap; }
+.lesson-archived-pill { display:inline-block; margin-top:8px; padding:4px 9px; border-radius:99px; color:#9a3412; background:#ffedd5; font-size:.7rem; font-weight:800; }
+.lessons-folder-settings { padding:14px 22px; }
+.lessons-folder-settings summary { display:flex; align-items:center; gap:8px; cursor:pointer; color:#475569; font-weight:800; font-size:.84rem; }
+.lessons-folder-settings form,.lesson-editor { display:grid; gap:15px; }
+.lessons-folder-settings form { margin-top:18px; }
+.lesson-editor h2 { margin:0; }
+.lesson-admin-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.lesson-admin-actions svg { width:16px; }
+.lesson-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.lesson-card { min-width:0; width:100%; min-height:110px; padding:18px; border:1px solid var(--line); display:flex; align-items:flex-start; gap:13px; text-align:left; }
+.lesson-card:hover { border-color:#9bb6cc; box-shadow:0 10px 24px #0f172a12; }
+.lesson-card-icon { width:40px; height:40px; flex:0 0 auto; border-radius:11px; display:grid; place-items:center; color:var(--orange); background:#fff2e9; }
+.lesson-card-icon svg { width:21px; }
+.lesson-card>span:last-child { min-width:0; }
+.lesson-card strong,.lesson-card small,.lesson-card em { display:block; }
+.lesson-card strong { margin:2px 0 7px; color:var(--ink); }
+.lesson-card small { max-height:3em; overflow:hidden; color:var(--muted); font-size:.78rem; line-height:1.5; }
+.lesson-card em { margin-top:7px; color:#9a3412; font-size:.7rem; font-style:normal; font-weight:800; }
+.lesson-empty { min-height:240px; display:grid; place-items:center; align-content:center; text-align:center; }
+.lesson-empty>svg { width:38px; height:38px; margin-bottom:12px; color:var(--orange); }
+.lesson-empty h2 { margin-bottom:6px; }
+.lesson-empty p { margin:0; color:var(--muted); }
+.lesson-view h2 { margin:12px 0 18px; font-size:1.7rem; }
+.lesson-back { border:0; padding:0; display:flex; align-items:center; gap:8px; color:#3b5c75; background:transparent; font-size:.8rem; font-weight:800; }
+.lesson-video { width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:14px; background:#0f172a; }
+.lesson-video iframe { width:100%; height:100%; border:0; }
+.lesson-description { margin:22px 0; white-space:pre-wrap; color:#334155; line-height:1.7; }
+@media (max-width:900px) { .lessons-layout { grid-template-columns:1fr; }.lessons-sidebar { position:static; }.lesson-cards { grid-template-columns:1fr; } }
+@media (max-width:620px) { .lessons-folder-heading { align-items:flex-start; flex-direction:column; }.lesson-admin-actions { flex-direction:column; }.lesson-admin-actions button { width:100%; } }
