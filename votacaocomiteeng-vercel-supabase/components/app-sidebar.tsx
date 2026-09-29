@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Clapperboard, FolderKanban, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserRound, UsersRound, Vote, X } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Clapperboard, FolderKanban, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, UsersRound, Vote, X } from "lucide-react";
 
 type SidebarUser = { name: string; email: string; isAdmin: boolean; avatarUrl?: string | null; hasActiveGroup?: boolean };
 
@@ -13,7 +13,6 @@ const primaryItems = [
   { href: "/calendar", label: "Cronograma", icon: CalendarDays },
   { href: "/", label: "Votação", icon: Vote },
   { href: "/community", label: "Nós", icon: UsersRound },
-  { href: "/profile", label: "Meu perfil", icon: UserRound },
 ];
 
 const adminItems = [
@@ -31,7 +30,7 @@ export default function AppSidebar({ user }: { user: SidebarUser }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(pathname.startsWith("/admin"));
   const active = (href: string) => { const base = href.split("?")[0]; return base === "/" ? pathname === "/" : pathname.startsWith(base); };
-  const visiblePrimaryItems = user.isAdmin || user.hasActiveGroup ? primaryItems : primaryItems.filter((item) => item.href === "/community" || item.href === "/profile");
+  const visiblePrimaryItems = user.isAdmin || user.hasActiveGroup ? primaryItems : primaryItems.filter((item) => item.href === "/community");
 
   return <>
     <button className="sidebar-mobile-trigger" onClick={() => setMobileOpen(true)} aria-label="Abrir menu"><Menu/></button>
