@@ -3,15 +3,18 @@ import { configuredAdminEmails, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import VotingClient from "./voting-client";
+import { currentUserView } from "@/lib/current-user-view";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const adminMode = await isAdmin(user);
+  const userView = await currentUserView(user);
+  const adminMode = userView.isAdmin;
+  if (!adminMode && !userView.hasActiveGroup) redirect("/workspace");
   const pollQuery = adminMode
     ? createAdminClient().from("polls").select("*").in("status", ["active", "closed"]).order("created_at", { ascending: false }).limit(1)
     : supabase.from("polls").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(1);
@@ -56,8 +59,8 @@ export default async function HomePage() {
     }
   }
 
-  return <VotingClient initialState={{
-    user: { name: String(user.user_metadata?.name || user.email?.split("@")[0] || "Participante"), email: user.email ?? "", isAdmin: adminMode },
+  return <VotingClient initialTab={(await searchParams).view === "admin" && adminMode ? "admin" : "voting"} initialState={{
+    user: userView,
     poll,
     proposals,
     myVote,

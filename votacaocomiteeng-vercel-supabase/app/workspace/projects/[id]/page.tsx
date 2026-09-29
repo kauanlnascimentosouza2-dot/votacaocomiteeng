@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { projectAccess, signedProjectFile } from "@/lib/project-access";
 import ProjectEditor from "./project-editor";
+import AppSidebar from "@/components/app-sidebar";
+import { currentUserView } from "@/lib/current-user-view";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +12,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  const sidebarUser = await currentUserView(user);
   const { id } = await params;
   const access = await projectAccess(user, id);
   if (!access.project || !access.allowed) redirect("/workspace");
@@ -24,5 +27,5 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     signedProjectFile(access.admin, access.project.pdf_url),
     Promise.all((images ?? []).map(async (image) => ({ ...image, signedUrl: await signedProjectFile(access.admin, image.image_url) }))),
   ]);
-  return <div className="semester-shell"><header className="semester-topbar"><Link href="/workspace">← Voltar para o grupo</Link><strong>{demand?.title}</strong><span>{access.member?.role === "leader" ? "Líder do grupo" : access.adminMode ? "Administrador" : "Integrante"}</span></header><main className="project-editor-main"><ProjectEditor project={{ ...access.project, mainImageUrl, pdfUrl, images: signedImages }} demand={demand} deliverables={deliverables ?? []} submissions={submissions ?? []} canSubmitFinal={access.adminMode || access.member?.role === "leader"}/></main></div>;
+  return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content semester-shell"><div className="project-editor-main"><ProjectEditor project={{ ...access.project, mainImageUrl, pdfUrl, images: signedImages }} demand={demand} deliverables={deliverables ?? []} submissions={submissions ?? []} canSubmitFinal={access.adminMode || access.member?.role === "leader"}/></div></main></div>;
 }

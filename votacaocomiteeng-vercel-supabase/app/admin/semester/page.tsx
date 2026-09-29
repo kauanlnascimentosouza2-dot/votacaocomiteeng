@@ -4,6 +4,8 @@ import { isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import SemesterBoard from "./semester-board";
+import AppSidebar from "@/components/app-sidebar";
+import { currentUserView } from "@/lib/current-user-view";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,7 @@ export default async function SemesterAdminPage({ searchParams }: { searchParams
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   if (!await isAdmin(user)) redirect("/");
+  const sidebarUser = await currentUserView(user);
 
   const admin = createAdminClient();
   const { data: semesterRows } = await admin.from("semesters").select("*").order("created_at", { ascending: false });
@@ -20,7 +23,7 @@ export default async function SemesterAdminPage({ searchParams }: { searchParams
   const semester = semesters.find((item) => item.id === requestedId) ?? semesters[0] ?? null;
 
   if (!semester) {
-    return <div className="semester-shell"><header className="semester-topbar"><Link href="/">← Voltar para a votação</Link><strong>Gestão acadêmica</strong></header><main className="semester-workspace"><SemesterBoard initialData={{ semester: null, semesters: [], groups: [], people: [] }} /></main></div>;
+    return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content semester-shell"><div className="semester-workspace"><SemesterBoard initialData={{ semester: null, semesters: [], groups: [], people: [] }} /></div></main></div>;
   }
 
   const [{ data: groupRows }, { data: memberRows }, { data: enrollmentRows }, { data: profileRows }] = await Promise.all([
@@ -47,5 +50,5 @@ export default async function SemesterAdminPage({ searchParams }: { searchParams
       role: memberByUser.get(profile.id)?.role ?? "member",
     }));
 
-  return <div className="semester-shell"><header className="semester-topbar"><Link href="/">← Voltar para a votação</Link><strong>Gestão acadêmica</strong><span>{user.email}</span></header><main className="semester-workspace"><SemesterBoard initialData={{ semester, semesters, groups, people }} /></main></div>;
+  return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content semester-shell"><div className="semester-workspace"><SemesterBoard initialData={{ semester, semesters, groups, people }} /></div></main></div>;
 }

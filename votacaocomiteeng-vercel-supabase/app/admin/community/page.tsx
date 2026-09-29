@@ -1,0 +1,9 @@
+import { redirect } from "next/navigation";
+import AppSidebar from "@/components/app-sidebar";
+import { currentUserView } from "@/lib/current-user-view";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import CommunityModeration from "./community-moderation";
+
+export const dynamic="force-dynamic";
+export default async function CommunityAdminPage(){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect("/login");const sidebarUser=await currentUserView(user);if(!sidebarUser.isAdmin)redirect("/");const admin=createAdminClient();const {data:posts}=await admin.from("community_posts").select("*, semesters(name)").eq("status","pending").order("created_at");const authorIds=[...new Set((posts??[]).map(post=>post.author_id))];const postIds=(posts??[]).map(post=>post.id);const [{data:profiles},{data:images}]=await Promise.all([authorIds.length?admin.from("profiles").select("id,name,email").in("id",authorIds):Promise.resolve({data:[]}),postIds.length?admin.from("community_post_images").select("*").in("post_id",postIds).order("position"):Promise.resolve({data:[]})]);const profileMap=new Map((profiles??[]).map(profile=>[profile.id,profile]));const rows=await Promise.all((posts??[]).map(async post=>({...post,authorName:profileMap.get(post.author_id)?.name||profileMap.get(post.author_id)?.email||"Participante",images:await Promise.all((images??[]).filter(image=>image.post_id===post.id).map(async image=>{const {data}=await admin.storage.from("community-media").createSignedUrl(image.image_path,3600);return data?.signedUrl??null;}))})));return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content"><CommunityModeration posts={rows}/></main></div>;}

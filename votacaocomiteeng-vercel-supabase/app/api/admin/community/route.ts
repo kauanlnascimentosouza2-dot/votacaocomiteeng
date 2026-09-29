@@ -1,0 +1,5 @@
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/admin-request";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export async function PATCH(request:Request){const {user,allowed}=await requireAdmin();if(!user)return NextResponse.json({error:"Faça login para continuar."},{status:401});if(!allowed)return NextResponse.json({error:"Acesso exclusivo do administrador."},{status:403});const body=await request.json().catch(()=>({})) as {postId?:string;decision?:"approved"|"rejected";note?:string};if(!body.postId||!body.decision)return NextResponse.json({error:"Decisão inválida."},{status:400});const {error}=await createAdminClient().from("community_posts").update({status:body.decision,moderation_note:body.note?.trim()||null,approved_by:body.decision==="approved"?user.id:null,approved_at:body.decision==="approved"?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq("id",body.postId);if(error)return NextResponse.json({error:"Não foi possível moderar."},{status:400});return NextResponse.json({ok:true});}

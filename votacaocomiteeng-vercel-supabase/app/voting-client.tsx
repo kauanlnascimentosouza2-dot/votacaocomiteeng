@@ -4,11 +4,12 @@ import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BarChart3, CalendarDays, Check, ChevronRight, CircleUserRound, Clock3, Download, Edit3, FileText, LogOut, Plus, Save, Settings2, ShieldCheck, Trash2, UserPlus, Users, Vote, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import AppSidebar from "@/components/app-sidebar";
 
 type Proposal = { id: string; title: string; description: string; image_url: string | null; accent: string };
 type VoteRow = { id: string; userName: string; email: string; proposalTitle: string; createdAt: string };
 type AppState = {
-  user: { name: string; email: string; isAdmin: boolean };
+  user: { name: string; email: string; isAdmin: boolean; avatarUrl?: string | null; hasActiveGroup?: boolean };
   poll: { id: string; title: string; description: string; status: "active" | "closed"; ends_at: string | null } | null;
   proposals: Array<Record<string, unknown>>;
   myVote: Record<string, unknown> | null;
@@ -17,9 +18,9 @@ type AppState = {
   admins: string[];
 };
 
-export default function VotingClient({ initialState }: { initialState: AppState }) {
+export default function VotingClient({ initialState, initialTab = "voting" }: { initialState: AppState; initialTab?: "voting" | "admin" }) {
   const state = { ...initialState, proposals: initialState.proposals as unknown as Proposal[] };
-  const [tab, setTab] = useState<"voting" | "admin">("voting");
+  const [tab, setTab] = useState<"voting" | "admin">(initialTab);
   const [selected, setSelected] = useState<Proposal | null>(null);
   const [previewImage, setPreviewImage] = useState<Proposal | null>(null);
   const [busy, setBusy] = useState(false);
@@ -105,10 +106,10 @@ export default function VotingClient({ initialState }: { initialState: AppState 
     router.push("/login"); router.refresh();
   }
 
-  if (!state.poll) return <main className="empty-state"><div className="brand-logo"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div><h1>Não há votação aberta</h1><a className="primary-button link-button" href="/workspace">Ir para meus projetos</a><button className="text-button" onClick={signOut}>Sair</button></main>;
+  if (!state.poll) return <div className="app-frame"><AppSidebar user={state.user}/><main className="app-content empty-state"><div className="brand-logo"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div><h1>Não há votação aberta</h1><a className="primary-button link-button" href="/workspace">Ir para meus projetos</a><button className="text-button" onClick={signOut}>Sair</button></main></div>;
 
   return (
-    <div className="app-shell">
+    <div className="app-frame"><AppSidebar user={state.user}/><div className="app-content"><div className="app-shell">
       <header className="topbar"><div className="topbar-inner"><div className="brand"><div className="brand-logo small"><img src="/logo-comite.png" alt="Comitê de Engenharias Senac" /></div><div><strong>votacaocomiteeng</strong><span>Comitê de Engenharia</span></div></div><div className="user-area"><a className="portal-link" href="/workspace">Meus projetos</a><div><strong>{state.user.name}</strong><span>{state.user.isAdmin ? "Administrador" : "Participante"}</span></div><CircleUserRound/><button className="icon-button" onClick={signOut} aria-label="Sair"><LogOut/></button></div></div></header>
       <main className="workspace">
         <section className="page-heading"><div><div className="status-line"><span className={`status-pill ${state.poll.status === "closed" ? "closed" : ""}`}>{state.poll.status === "active" ? "Votação aberta" : "Votação encerrada"}</span><span><Clock3/> {state.poll.ends_at ? `Encerra em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date(state.poll.ends_at))}` : "Sem prazo definido"}</span></div><h1>{state.poll.title}</h1><p>{state.poll.description}</p></div>{state.user.isAdmin && <nav className="tabs"><button className={tab === "voting" ? "active" : ""} onClick={() => setTab("voting")}><Vote/>Votação</button><button className={tab === "admin" ? "active" : ""} onClick={() => setTab("admin")}><Settings2/>Painel admin</button></nav>}</section>
@@ -126,7 +127,7 @@ export default function VotingClient({ initialState }: { initialState: AppState 
 
       {previewImage?.image_url && <div className="image-preview-backdrop" onMouseDown={() => setPreviewImage(null)}><section className="image-preview" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={`Imagem ampliada de ${previewImage.title}`}><button type="button" className="image-preview-close" onClick={() => setPreviewImage(null)} aria-label="Fechar imagem"><X/></button><img src={previewImage.image_url} alt={previewImage.title}/><div><strong>{previewImage.title}</strong><span>Clique fora da imagem para fechar</span></div></section></div>}
       {selected && <div className="modal-backdrop" onMouseDown={() => setSelected(null)}><section className="modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="confirm-title"><h2 id="confirm-title">Confirmar seu voto?</h2><p>Você está escolhendo <strong>{selected.title}</strong>. Depois de confirmar, o voto não poderá ser alterado.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setSelected(null)}>Voltar</button><button className="primary-button" onClick={vote} disabled={busy}>{busy ? "Registrando…" : "Confirmar voto"}</button></div></section></div>}
-    </div>
+    </div></div></div>
   );
 }
 
