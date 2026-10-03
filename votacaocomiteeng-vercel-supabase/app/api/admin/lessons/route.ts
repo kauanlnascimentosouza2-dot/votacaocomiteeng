@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-request";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { activeLessonSemester, lessonEmbedUrl, lessonFolderIsActive, normalizeLessonUrl } from "@/lib/lessons";
+import { createActivityNotifications } from "@/lib/activity-notifications";
 
 type LessonInput = {
   lessonId?: string;
@@ -26,6 +27,11 @@ export async function POST(request: Request) {
   if (!body.folderId || !await lessonFolderIsActive(semester.id, body.folderId)) return NextResponse.json({ error: "Selecione uma pasta ativa." }, { status: 400 });
   const { data, error } = await createAdminClient().from("lessons").insert({ semester_id: semester.id, folder_id: body.folderId, title, content: body.description?.trim() ?? "", video_url: videoUrl, created_by: user.id }).select().single();
   if (error || !data) return NextResponse.json({ error: "Não foi possível cadastrar a aula." }, { status: 400 });
+  const admin = createAdminClient();
+  const { data: groups } = await admin.from("groups").select("id").eq("semester_id", semester.id).eq("status", "active");
+  const ids = (groups ?? []).map(group => group.id);
+  const { data: members } = ids.length ? await admin.from("group_members").select("user_id").in("group_id", ids) : { data: [] };
+  await createActivityNotifications({ semesterId: semester.id, recipientIds: (members ?? []).map(member => member.user_id), eventKey: `lesson:${data.id}`, kind: "lesson", title: `Nova aula: ${title}`, message: "Uma nova aula está disponível para a sua equipe.", href: "/lessons", origin: new URL(request.url).origin });
   return NextResponse.json(data, { status: 201 });
 }
 

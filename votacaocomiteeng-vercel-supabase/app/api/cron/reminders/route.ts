@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendPendingActivityEmails } from "@/lib/activity-notifications";
 
 export async function GET(request:Request){
   const secret=process.env.CRON_SECRET;const authorization=request.headers.get("authorization");
   if(!secret||authorization!==`Bearer ${secret}`)return NextResponse.json({error:"Não autorizado."},{status:401});
   const apiKey=process.env.BREVO_API_KEY;const senderEmail=process.env.BREVO_SENDER_EMAIL;const senderName=process.env.BREVO_SENDER_NAME||"Comitê de Engenharia";
   if(!apiKey||!senderEmail)return NextResponse.json({error:"Configure BREVO_API_KEY e BREVO_SENDER_EMAIL para ativar os lembretes."},{status:503});
+  await sendPendingActivityEmails(process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin);
   const admin=createAdminClient();const {data:semester}=await admin.from("semesters").select("id,name").eq("status","active").maybeSingle();if(!semester)return NextResponse.json({ok:true,sent:0,message:"Nenhum semestre ativo."});
   const {data:demands}=await admin.from("demands").select("id,title").eq("semester_id",semester.id).neq("status","closed");const demandIds=(demands??[]).map(row=>row.id);if(!demandIds.length)return NextResponse.json({ok:true,sent:0});
   const [{data:deliverables},{data:assignments},{data:members}]=await Promise.all([admin.from("deliverables").select("id,demand_id,title,due_at").in("demand_id",demandIds).not("due_at","is",null),admin.from("demand_groups").select("demand_id,group_id").in("demand_id",demandIds),admin.from("group_members").select("group_id,user_id").eq("semester_id",semester.id)]);

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Clapperboard, FolderKanban, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ShieldCheck, UsersRound, Vote, X } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Clapperboard, FolderKanban, LogOut, Menu, MessageCircle, PanelLeftClose, PanelLeftOpen, ShieldCheck, UsersRound, Vote, X } from "lucide-react";
+import NotificationBell from "@/components/notification-bell";
 
 type SidebarUser = { name: string; email: string; isAdmin: boolean; avatarUrl?: string | null; hasActiveGroup?: boolean };
 
@@ -13,6 +14,7 @@ const primaryItems = [
   { href: "/calendar", label: "Cronograma", icon: CalendarDays },
   { href: "/", label: "Votação", icon: Vote },
   { href: "/community", label: "Nós", icon: UsersRound },
+  { href: "/chat", label: "Chat geral", icon: MessageCircle },
 ];
 
 const adminItems = [
@@ -42,6 +44,7 @@ export default function AppSidebar({ user }: { user: SidebarUser }) {
         {visiblePrimaryItems.map((item) => <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={active(item.href) ? "active" : ""} data-tooltip={item.label}><item.icon/><span>{item.label}</span></Link>)}
         {user.isAdmin && <div className="sidebar-admin"><button className={pathname.startsWith("/admin") ? "active" : ""} onClick={() => { if (!expanded && !mobileOpen) { setExpanded(true); setAdminOpen(true); } else { setAdminOpen(!adminOpen); } }} data-tooltip="Painel administrativo"><ShieldCheck/><span>Painel administrativo</span>{adminOpen ? <ChevronLeft className="submenu-arrow"/> : <ChevronRight className="submenu-arrow"/>}</button>{adminOpen && <div className="sidebar-submenu">{adminItems.map((item) => <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={active(item.href) ? "active" : ""}><ClipboardList/><span>{item.label}</span></Link>)}</div>}</div>}
       </nav>
+      {(user.isAdmin || user.hasActiveGroup) && <NotificationBell onNavigate={() => setMobileOpen(false)}/>}
       <div className="sidebar-account"><Link href="/profile" data-tooltip="Meu perfil">{user.avatarUrl ? <img src={user.avatarUrl} alt="Foto do perfil"/> : <span>{initials(user.name)}</span>}<div><strong>{user.name}</strong><small>{user.email}</small></div></Link><form action="/auth/signout" method="post"><button data-tooltip="Sair" aria-label="Sair"><LogOut/><span>Sair</span></button></form></div>
     </aside>
   </>;
