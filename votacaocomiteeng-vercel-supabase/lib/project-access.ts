@@ -11,8 +11,8 @@ export async function projectAccess(user: User, projectId: string) {
   return { admin, project, allowed: adminMode || Boolean(member), member, adminMode };
 }
 
-export async function signedProjectFile(admin: ReturnType<typeof createAdminClient>, path: string | null) {
+export async function signedProjectFile(admin: ReturnType<typeof createAdminClient>, path: string | null, downloadName?: string) {
   if (!path) return null;
-  const { data } = await admin.storage.from("project-files").createSignedUrl(path, 60 * 60);
+  const { data } = await admin.storage.from("project-files").createSignedUrl(path, 60 * 60, downloadName ? { download: downloadName } : undefined);
   return data?.signedUrl ?? null;
 }

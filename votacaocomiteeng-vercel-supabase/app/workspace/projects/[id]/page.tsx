@@ -27,5 +27,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     signedProjectFile(access.admin, access.project.pdf_url),
     Promise.all((images ?? []).map(async (image) => ({ ...image, signedUrl: await signedProjectFile(access.admin, image.image_url) }))),
   ]);
-  return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content semester-shell"><div className="project-editor-main"><ProjectEditor project={{ ...access.project, mainImageUrl, pdfUrl, images: signedImages }} demand={demand} deliverables={deliverables ?? []} submissions={submissions ?? []} canSubmitFinal={access.adminMode || access.member?.role === "leader"}/></div></main></div>;
+  const submissionIds = (submissions ?? []).map(item => item.id);
+  const { data: storedFiles } = submissionIds.length ? await access.admin.from("submission_files").select("id,submission_id,file_name,file_url,size_bytes").in("submission_id", submissionIds) : { data: [] };
+  const signedFiles = await Promise.all((storedFiles ?? []).map(async file => ({ ...file, downloadUrl: await signedProjectFile(access.admin, file.file_url, file.file_name) })));
+  const submissionsWithFiles = (submissions ?? []).map(submission => ({ ...submission, files: signedFiles.filter(file => file.submission_id === submission.id) }));
+  return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content semester-shell"><div className="project-editor-main"><ProjectEditor project={{ ...access.project, mainImageUrl, pdfUrl, images: signedImages }} demand={demand} deliverables={deliverables ?? []} submissions={submissionsWithFiles} canSubmitFinal={access.adminMode || access.member?.role === "leader"}/></div></main></div>;
 }
