@@ -359,11 +359,11 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 .sidebar-submenu>a { min-height:36px; padding-left:7px; }
 .sidebar-submenu svg { width:15px; }
 .sidebar-account { margin-top:auto; padding-top:10px; border-top:1px solid #28313a; display:grid; gap:5px; }
-.sidebar-account>a,.sidebar-account button { min-height:44px; width:100%; padding:5px 8px; border:0; border-radius:9px; display:flex; align-items:center; gap:11px; color:#b8c3cc; background:transparent; text-decoration:none; }
+.sidebar-account>a,.sidebar-account button { min-height:44px; width:100%; min-width:0; padding:5px 8px; border:0; border-radius:9px; position:relative; display:flex; align-items:center; gap:11px; color:#b8c3cc; background:transparent; text-decoration:none; }
 .sidebar-account>a:hover,.sidebar-account button:hover { color:#fff; background:#1d252d; }
 .sidebar-account>a>img,.sidebar-account>a>span { width:34px; height:34px; flex:0 0 auto; border-radius:999px; display:grid; place-items:center; object-fit:cover; color:#fff; background:#e96f2f; font-size:.7rem; font-weight:900; }
-.sidebar-account>a>div { min-width:165px; opacity:0; }
-.app-sidebar.expanded .sidebar-account>a>div { opacity:1; }
+.sidebar-account>a>div { min-width:0; display:none; }
+.app-sidebar.expanded .sidebar-account>a>div,.app-sidebar.mobile-open .sidebar-account>a>div { display:block; }
 .sidebar-account strong,.sidebar-account small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .sidebar-account strong { font-size:.74rem; }
 .sidebar-account small { color:#82909c; font-size:.62rem; }
