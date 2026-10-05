@@ -142,7 +142,10 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 .login-form { text-align:left; }
 .login-form .primary-button { width:100%; }
 .form-message { margin:0; color:#9a3412; font-size:.82rem; line-height:1.5; }
+.forgot-button { justify-self:end; margin-top:-7px; padding:0; border:0; color:#52657c; background:transparent; font-size:.82rem; font-weight:750; }
+.forgot-button:hover { color:var(--orange); text-decoration:underline; }
 .text-button { margin-top:18px; border:0; color:var(--navy); background:transparent; font-weight:800; }
+.login-card > .primary-button { width:100%; margin-top:18px; }
 .empty-state { align-content:center; text-align:center; }
 .empty-state .brand-mark { margin-bottom:18px; }
 

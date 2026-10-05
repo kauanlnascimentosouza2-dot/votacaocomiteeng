@@ -7,7 +7,7 @@ import CalendarClient from "./calendar-client";
 
 export const dynamic="force-dynamic";
 
-type CalendarItem={id:string;title:string;description:string;category:"demand"|"delivery"|"voting"|"publication"|"custom";startsAt:string;endsAt:string|null;status:"pending"|"completed"|"late"|"cancelled";source:string;location?:string|null};
+type CalendarItem={id:string;title:string;description:string;category:"demand"|"delivery"|"voting"|"publication"|"custom";startsAt:string;endsAt:string|null;status:"pending"|"completed"|"late"|"cancelled";source:string;allDay:boolean;location?:string|null};
 
 export default async function CalendarPage(){
   const supabase=await createClient(); const {data:{user}}=await supabase.auth.getUser(); if(!user)redirect("/login");
@@ -35,7 +35,8 @@ export default async function CalendarPage(){
   }
   for(const delivery of deliverables??[]){if(!delivery.due_at)continue;const completed=submissionIds.has(delivery.id);const status=completed?"completed":new Date(delivery.due_at).getTime()<now?"late":"pending";items.push(item(`delivery-${delivery.id}`,delivery.title,delivery.instructions,"delivery",delivery.due_at,null,status,"deliverable"));}
   const groupEventIds=new Set((eventGroups??[]).filter(row=>row.group_id===membership?.group_id).map(row=>row.event_id));
-  for(const event of customEvents??[]){const visible=sidebarUser.isAdmin||event.audience==="all"||(event.audience==="groups"&&groupEventIds.has(event.id));if(visible)items.push(item(event.id,event.title,event.description,"custom",event.starts_at,event.ends_at,event.status==="completed"?"completed":"pending","custom",event.location));}
+  const saoPauloDay=(value:string|Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value));
+  for(const event of customEvents??[]){const visible=sidebarUser.isAdmin||event.audience==="all"||(event.audience==="groups"&&groupEventIds.has(event.id));if(visible){const status=event.status==="completed"?"completed":event.all_day&&saoPauloDay(event.starts_at)<saoPauloDay(new Date())?"late":"pending";items.push(item(event.id,event.title,event.description,event.category==="delivery"?"delivery":"custom",event.starts_at,event.ends_at,status,"custom",event.location,Boolean(event.all_day)));}}
   return <div className="app-frame"><AppSidebar user={sidebarUser}/><main className="app-content"><CalendarClient semester={semester} initialItems={items} groups={groups??[]} isAdmin={sidebarUser.isAdmin}/></main></div>;
 }
-function item(id:string,title:string,description:string,category:CalendarItem["category"],startsAt:string,endsAt:string|null,status:CalendarItem["status"],source:string,location?:string|null):CalendarItem{return{id,title,description,category,startsAt,endsAt,status,source,location};}
+function item(id:string,title:string,description:string,category:CalendarItem["category"],startsAt:string,endsAt:string|null,status:CalendarItem["status"],source:string,location?:string|null,allDay=false):CalendarItem{return{id,title,description,category,startsAt,endsAt,status,source,location,allDay};}

@@ -32,7 +32,7 @@ export async function DELETE(request:Request){
   if(!allowed)return NextResponse.json({error:"Acesso exclusivo do administrador."},{status:403});
   const body=await request.json().catch(()=>({})) as {eventId?:string};
   if(!body.eventId)return NextResponse.json({error:"Evento inválido."},{status:400});
-  const {error}=await createAdminClient().from("calendar_events").update({status:"cancelled",updated_at:new Date().toISOString()}).eq("id",body.eventId).eq("category","custom");
+  const {error}=await createAdminClient().from("calendar_events").update({status:"cancelled",updated_at:new Date().toISOString()}).eq("id",body.eventId).in("category",["custom","delivery"]);
   if(error)return NextResponse.json({error:"Não foi possível cancelar o evento."},{status:400});
   return NextResponse.json({ok:true});
 }
