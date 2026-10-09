@@ -28,11 +28,13 @@ export default async function CalendarPage(){
     admin.from("calendar_event_groups").select("event_id,group_id"),
   ]);
   const submissionIds=new Set((submissions??[]).map(item=>item.deliverable_id)); const now=Date.now(); const items:CalendarItem[]=[];
+  const {data:rounds}=await admin.from('voting_rounds').select('id,demand_id,round_number,status,starts_at,ends_at,demands!inner(title,semester_id)').eq('demands.semester_id',semester.id);
   for(const demand of demands??[]){
     if(demand.submission_opens_at)items.push(item(`demand-open-${demand.id}`,`Abertura: ${demand.title}`,demand.description,"demand",demand.submission_opens_at,null,"pending","demand"));
     if(demand.publication_at)items.push(item(`publication-${demand.id}`,`Publicação: ${demand.title}`,"Publicação programada dos projetos aprovados.","publication",demand.publication_at,null,"pending","demand"));
-    if(demand.voting_enabled&&demand.voting_starts_at)items.push(item(`vote-start-${demand.id}`,`Início da votação: ${demand.title}`,"Abertura da votação.","voting",demand.voting_starts_at,demand.voting_ends_at,"pending","demand"));
+    if(demand.voting_enabled&&demand.voting_starts_at&&!(rounds??[]).some(r=>r.demand_id===demand.id))items.push(item(`vote-start-${demand.id}`,`Início da votação: ${demand.title}`,"Abertura da votação.","voting",demand.voting_starts_at,demand.voting_ends_at,"pending","demand"));
   }
+  for(const r of rounds??[]){const title=(r.demands as unknown as {title:string}).title;const finished=!['scheduled','open'].includes(r.status)||Boolean(r.ends_at&&Date.parse(r.ends_at)<=now);if(r.starts_at)items.push(item(`round-start-${r.id}`,`Votação: ${title} · rodada ${r.round_number}`,'Abertura da rodada de votação.','voting',r.starts_at,r.ends_at,finished?'completed':'pending','round'));if(r.ends_at)items.push(item(`round-end-${r.id}`,`Fim da votação: ${title} · rodada ${r.round_number}`,'Encerramento da rodada de votação.','voting',r.ends_at,null,finished?'completed':'pending','round'));}
   for(const delivery of deliverables??[]){if(!delivery.due_at)continue;const completed=submissionIds.has(delivery.id);const status=completed?"completed":new Date(delivery.due_at).getTime()<now?"late":"pending";items.push(item(`delivery-${delivery.id}`,delivery.title,delivery.instructions,"delivery",delivery.due_at,null,status,"deliverable"));}
   const groupEventIds=new Set((eventGroups??[]).filter(row=>row.group_id===membership?.group_id).map(row=>row.event_id));
   const saoPauloDay=(value:string|Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value));

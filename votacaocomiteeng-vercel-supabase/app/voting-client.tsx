@@ -115,7 +115,7 @@ export default function VotingClient({ initialState, initialTab = "voting" }: { 
         <section className="page-heading"><div><div className="status-line"><span className={`status-pill ${state.poll.status === "closed" ? "closed" : ""}`}>{state.poll.status === "active" ? "Votação aberta" : "Votação encerrada"}</span><span><Clock3/> {state.poll.ends_at ? `Encerra em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(new Date(state.poll.ends_at))}` : "Sem prazo definido"}</span></div><h1>{state.poll.title}</h1><p>{state.poll.description}</p></div>{state.user.isAdmin && <nav className="tabs"><button className={tab === "voting" ? "active" : ""} onClick={() => setTab("voting")}><Vote/>Votação</button><button className={tab === "admin" ? "active" : ""} onClick={() => setTab("admin")}><Settings2/>Painel admin</button></nav>}</section>
         {notice && <div className="notice" role="status">{notice}</div>}
 
-        {tab === "voting" ? <>
+        {tab === "voting" && (state.poll.status === 'closed' || Boolean(state.poll.ends_at && Date.parse(state.poll.ends_at)<=Date.now())) ? <section className="panel"><h2>Votação encerrada</h2><p>Os projetos foram retirados da vitrine. Consulte o histórico na página de votações.</p><a href="/" className="secondary-button link-button">Voltar para votações</a></section> : tab === "voting" ? <>
           {state.myVote && <div className="success-banner"><span><Check/></span><div><strong>Seu voto foi registrado</strong><p>A escolha não pode ser alterada nesta votação.</p></div></div>}
           <section className="proposal-grid">{state.proposals.map((proposal, index) => {
             const chosen = String(state.myVote?.proposal_id ?? "") === proposal.id;

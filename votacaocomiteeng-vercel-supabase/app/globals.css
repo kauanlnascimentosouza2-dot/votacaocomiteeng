@@ -144,6 +144,41 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 .form-message { margin:0; color:#9a3412; font-size:.82rem; line-height:1.5; }
 .forgot-button { justify-self:end; margin-top:-7px; padding:0; border:0; color:#52657c; background:transparent; font-size:.82rem; font-weight:750; }
 .forgot-button:hover { color:var(--orange); text-decoration:underline; }
+.round-tabs { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 24px; }
+.round-tabs button { display:flex; align-items:center; gap:8px; padding:12px 16px; border:1px solid #dbe3ea; border-radius:12px; background:white; color:var(--navy); font-weight:750; }
+.round-tabs button.active { background:var(--navy); color:white; }
+.round-tabs svg { width:18px; height:18px; }
+.rounds-page > .panel { margin-bottom:24px; }
+.round-panel header { margin-bottom:20px; }
+.round-projects { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.round-project { overflow:hidden; border:1px solid #dbe3ea; border-radius:18px; }
+.round-project > div { padding:20px; display:flex; flex-direction:column; gap:12px; }
+.round-project p { white-space:pre-wrap; overflow-wrap:anywhere; }
+.round-image { width:100%; padding:0; border:0; background:#edf2f7; cursor:zoom-in; }
+.round-image img { width:100%; height:230px; object-fit:contain; display:block; }
+.round-result { color:var(--navy); }
+.round-admin { margin-top:24px; border-top:1px solid #dbe3ea; padding-top:20px; }
+.round-admin details { margin-top:16px; }
+.round-admin summary { cursor:pointer; font-weight:750; }
+.legacy-round .danger-button { margin-left:12px; }
+.round-preview { position:fixed; inset:0; z-index:1500; background:#020617e8; display:flex; justify-content:center; align-items:center; padding:50px 20px; }
+.round-preview img { max-width:100%; max-height:90vh; object-fit:contain; }
+.round-preview button { position:absolute; top:15px; right:20px; border:0; background:white; border-radius:50%; padding:10px; }
+.sidebar-guide { display:flex; align-items:center; gap:12px; margin:8px 14px; padding:12px; border:0; border-radius:12px; color:#b8c7d0; background:transparent; position:relative; }
+.sidebar-guide > span { display:none; }
+.app-sidebar.expanded .sidebar-guide > span,.app-sidebar.mobile-open .sidebar-guide > span { display:block; }
+.sidebar-guide:hover { background:#26353e; color:white; }
+.guide-shade { position:fixed; inset:0; z-index:2000; background:#071421b8; display:flex; align-items:center; justify-content:center; padding:20px; }
+.guide-card { width:min(600px,100%); max-height:90vh; overflow:auto; padding:36px; border-radius:24px; background:white; color:var(--ink); box-shadow:0 24px 80px #0005; outline:none; }
+.notification-shell + .sidebar-guide + .sidebar-account { margin-top:0; }
+.guide-card h2 { font-size:1.7rem; margin:16px 0; }
+.guide-card p { line-height:1.75; color:#52657c; }
+.guide-progress { display:flex; gap:6px; margin:24px 0; }
+.guide-progress span { flex:1; height:5px; border-radius:5px; background:#e2e8f0; }
+.guide-progress span.active { background:var(--orange); }
+.guide-actions,.guide-actions > div { display:flex; align-items:center; gap:10px; justify-content:space-between; }
+.guide-actions .text-button { display:flex; align-items:center; gap:4px; margin:0; padding:8px 0; font-size:.85rem; }
+@media(max-width:620px) { .guide-card { padding:24px; } .guide-actions { align-items:stretch; flex-direction:column-reverse; } .guide-actions > div { justify-content:flex-end; } .round-projects { grid-template-columns:1fr; } .legacy-round .danger-button { margin:12px 0 0; } }
 .text-button { margin-top:18px; border:0; color:var(--navy); background:transparent; font-weight:800; }
 .login-card > .primary-button { width:100%; margin-top:18px; }
 .empty-state { align-content:center; text-align:center; }

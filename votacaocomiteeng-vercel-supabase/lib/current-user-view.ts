@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function currentUserView(user: User) {
   const admin = createAdminClient();
-  const { data: profile } = await admin.from("profiles").select("name, email, avatar_path").eq("id", user.id).maybeSingle();
+  const { data: profile } = await admin.from("profiles").select("*").eq("id", user.id).maybeSingle();
   let avatarUrl: string | null = null;
   if (profile?.avatar_path) {
     const { data } = await admin.storage.from("profile-images").createSignedUrl(profile.avatar_path, 60 * 60);
@@ -21,6 +21,8 @@ export async function currentUserView(user: User) {
     }
   }
   return {
+    id: user.id,
+    onboardingCompleted: Boolean(profile?.onboarding_completed_at),
     name: profile?.name || String(user.user_metadata?.name || user.email?.split("@")[0] || "Participante"),
     email: profile?.email || user.email || "",
     isAdmin: adminMode,
