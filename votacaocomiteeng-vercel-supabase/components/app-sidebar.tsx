@@ -21,7 +21,7 @@ const primaryItems = [
 const adminItems = [
   { href: "/admin/semester", label: "Semestres e grupos" },
   { href: "/admin/demands", label: "Demandas e prazos" },
-  { href: "/admin/review", label: "Revisão de projetos" },
+  { href: "/admin/review", label: "Análise de projetos" },
   { href: "/?view=admin", label: "Votação e resultados" },
   { href: "/admin/community", label: "Publicações pendentes" },
   { href: "/admin/people", label: "Participantes e administradores" },
