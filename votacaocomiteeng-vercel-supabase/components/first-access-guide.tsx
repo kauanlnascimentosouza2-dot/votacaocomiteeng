@@ -9,7 +9,7 @@ export default function FirstAccessGuide({user}:{user:User}){
     {title:'Bem-vindo ao Comitê',text:'Este guia apresenta os principais controles. Você pode reabrir o tutorial pelo ícone de ajuda na parte inferior do menu lateral.'},
     {title:'Organize o semestre e os grupos',text:'Abra Painel administrativo → Semestres e grupos para alocar participantes, definir líderes e ativar os grupos. A ativação libera o ambiente de trabalho.'},
     {title:'Distribua demandas e prazos',text:'Em Demandas e prazos, escolha os grupos, as etapas e as datas de entrega, publicação e votação. O Cronograma reúne os prazos.'},
-    {title:'Revise as entregas',text:'Em Revisão de projetos, confira o conteúdo entregue pelo líder. Aprove o projeto ou peça ajustes antes de incluí-lo em uma votação.'},
+    {title:'Revise as entregas',text:'Em Revisão de projetos, confira cada projeto enviado pelos grupos. Aprove ou peça ajustes antes de incluí-lo em uma votação.'},
     {title:'Crie e encerre votações',text:'Abra Votação → Gerenciar votações. Escolha uma demanda e pelo menos dois projetos aprovados. Ao encerrar, os projetos saem da vitrine e vão para o Histórico. Libere os resultados quando desejar; em caso de empate, crie um desempate.'},
     {title:'Acompanhe a equipe',text:'Aulas reúne vídeos; Nós reúne publicações sujeitas à aprovação; Chat geral aproxima a equipe. No perfil do rodapé, confira seu e-mail de avisos. As notificações ficam no sino.'},
   ]:!user.hasActiveGroup?[
@@ -17,7 +17,7 @@ export default function FirstAccessGuide({user}:{user:User}){
     {title:'Complete seu perfil',text:'Abra seu perfil no rodapé do menu lateral para informar curso, competências, foto e e-mail para avisos. Quando seu grupo estiver ativo, você terá acesso às demandas e aos prazos.'},
   ]:[
     {title:'Bem-vindo ao seu ambiente',text:'O menu lateral reúne suas atividades. Passe o mouse nos ícones ou expanda o menu para ver os nomes. No celular, use o botão de menu.'},
-    {title:'Trabalhe com seu grupo',text:'Em Área do grupo, abra uma demanda para editar o projeto e salvar o conteúdo. Todos os integrantes podem editar; somente o líder confirma a entrega final.'},
+    {title:'Trabalhe com seu grupo',text:'Em Área do grupo, abra uma demanda para editar ou adicionar projetos. Todos os integrantes podem criar, editar e confirmar entregas.'},
     {title:'Acompanhe os prazos',text:'O Cronograma mostra entregas, publicações e votações. Use os filtros para escolher as categorias. O sino reúne os avisos das novas atividades.'},
     {title:'Participe das votações',text:'Em Votação, escolha um projeto de outra equipe. O projeto do seu grupo fica bloqueado. Confirme com atenção: você pode alterar o voto somente uma vez. As votações encerradas ficam no Histórico e os resultados dependem da liberação do administrador.'},
     {title:'Aprenda e converse',text:'Aulas reúne os vídeos; Nós reúne registros e conquistas da equipe; Chat geral permite conversar com os participantes. Suas publicações em Nós passam pela aprovação do administrador.'},

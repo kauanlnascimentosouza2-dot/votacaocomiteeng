@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   await admin.from("projects").insert(groupIds.map((groupId) => ({ demand_id: demand.id, group_id: groupId })));
 
   const intermediate = (body.deliverables ?? []).filter((item) => item.title?.trim()).map((item, position) => ({ demand_id: demand.id, title: item.title!.trim(), instructions: item.instructions?.trim() ?? "", due_at: item.dueAt || null, position, is_final: false }));
-  await admin.from("deliverables").insert([...intermediate, { demand_id: demand.id, title: "Entrega final", instructions: "Envio final realizado exclusivamente pelo líder do grupo.", due_at: body.submissionDueAt || null, position: intermediate.length, is_final: true }]);
+  await admin.from("deliverables").insert([...intermediate, { demand_id: demand.id, title: "Entrega final", instructions: "Envio final disponível para todos os integrantes do grupo.", due_at: body.submissionDueAt || null, position: intermediate.length, is_final: true }]);
   await admin.from("audit_logs").insert({ semester_id: body.semesterId, actor_user_id: user.id, actor_email: user.email ?? "", action: "demand_created", entity_type: "demand", entity_id: demand.id, details: { groups: groupIds } });
   await createActivityNotifications({ semesterId: body.semesterId, recipientIds: (memberRows ?? []).map(member => member.user_id), eventKey: `demand:${demand.id}`, kind: "demand", title: `Nova demanda: ${title}`, message: "Uma nova demanda foi atribuída ao seu grupo.", href: "/workspace", origin: new URL(request.url).origin });
   return NextResponse.json(demand, { status: 201 });

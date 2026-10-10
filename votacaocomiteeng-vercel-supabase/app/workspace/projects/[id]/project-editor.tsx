@@ -13,7 +13,7 @@ type SubmissionFile = { id: string; file_name: string; size_bytes: number; downl
 type Submission = { id: string; deliverable_id: string; notes: string; is_late: boolean; submitted_at: string; files: SubmissionFile[] };
 type PreparedUpload = { uploadId: string; path: string; token: string; contentType: string };
 
-export default function ProjectEditor({ project, demand, deliverables, submissions, canSubmitFinal }: { project: Project; demand: Demand; deliverables: Deliverable[]; submissions: Submission[]; canSubmitFinal: boolean }) {
+export default function ProjectEditor({ project, demand, deliverables, submissions }: { project: Project; demand: Demand; deliverables: Deliverable[]; submissions: Submission[] }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -97,12 +97,11 @@ export default function ProjectEditor({ project, demand, deliverables, submissio
         {deliverables.map(deliverable => {
           const previous = latestByDeliverable.get(deliverable.id);
           const history = submissions.filter(submission => submission.deliverable_id === deliverable.id);
-          const finalBlocked = deliverable.is_final && !canSubmitFinal;
           return <article className="panel deliverable-card" key={deliverable.id}>
             <header><span>{deliverable.is_final ? <Send/> : <Upload/>}</span><div><h3>{deliverable.title}</h3><p>{deliverable.instructions}</p></div>{previous && <span className={`submission-badge ${previous.is_late ? "late" : ""}`}><Check/>{previous.is_late ? "Entregue atrasado" : "Entregue"}</span>}</header>
             <div className="deliverable-due"><Clock3/>{deliverable.due_at ? new Date(deliverable.due_at).toLocaleString("pt-BR") : "Sem prazo"}</div>
             {history.length > 0 && <div className="submission-history"><strong>Arquivos entregues</strong>{history.map(item => <div key={item.id}><small>{new Date(item.submitted_at).toLocaleString("pt-BR")}{item.is_late ? " · atrasado" : ""}</small>{item.files.map(att => att.downloadUrl && <a key={att.id} href={att.downloadUrl} target="_blank" rel="noreferrer" download={att.file_name}><Download/>{att.file_name} <small>({Math.ceil(att.size_bytes / 1024 / 1024)} MB)</small></a>)}</div>)}</div>}
-            {finalBlocked ? <div className="leader-only">Somente o líder do grupo pode realizar a entrega final.</div> : <form className="submission-form" onSubmit={submit}><input type="hidden" name="deliverableId" value={deliverable.id}/><textarea name="notes" maxLength={5000} placeholder="Observações da entrega"/><label className="submission-file-label">Arquivo da entrega <small>DWG, DXF, PDF ou imagem · até 50 MB · envio direto ao Supabase</small><input name="file" type="file" accept=".dwg,.dxf,.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"/></label>{busy && uploading && <p className="upload-status" role="status">{uploading}</p>}<button className={deliverable.is_final ? "primary-button" : "secondary-button"} disabled={busy}>{deliverable.is_final ? <><Send/>Confirmar entrega final</> : <><Upload/>Enviar etapa</>}</button></form>}
+            <form className="submission-form" onSubmit={submit}><input type="hidden" name="deliverableId" value={deliverable.id}/><textarea name="notes" maxLength={5000} placeholder="Observações da entrega"/><label className="submission-file-label">Arquivo da entrega <small>DWG, DXF, PDF ou imagem · até 50 MB · envio direto ao Supabase</small><input name="file" type="file" accept=".dwg,.dxf,.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"/></label>{busy && uploading && <p className="upload-status" role="status">{uploading}</p>}<button className={deliverable.is_final ? "primary-button" : "secondary-button"} disabled={busy}>{deliverable.is_final ? <><Send/>Confirmar entrega final</> : <><Upload/>Enviar etapa</>}</button></form>
           </article>;
         })}
       </section>

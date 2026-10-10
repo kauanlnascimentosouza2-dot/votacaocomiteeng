@@ -18,8 +18,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const admin = access.admin;
   const { data: deliverable } = await admin.from("deliverables").select("id,is_final,due_at").eq("id", body.deliverableId).eq("demand_id", access.project.demand_id).maybeSingle();
   if (!deliverable) return NextResponse.json({ error: "Etapa inválida." }, { status: 400 });
-  if (deliverable.is_final && access.member?.role !== "leader" && !access.adminMode) return NextResponse.json({ error: "Somente o líder pode realizar a entrega final." }, { status: 403 });
-
   let intent: { id: string; storage_path: string; file_name: string; mime_type: string; size_bytes: number; status: string; expires_at: string } | null = null;
   if (body.uploadId) {
     const { data } = await admin.from("project_upload_intents").select("id,storage_path,file_name,mime_type,size_bytes,status,expires_at")

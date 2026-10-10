@@ -172,9 +172,11 @@ create table if not exists public.projects (
   published_at timestamptz,
   last_edited_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (demand_id, group_id)
+  updated_at timestamptz not null default now()
 );
+
+create index if not exists projects_demand_group_idx
+  on public.projects (demand_id, group_id);
 
 create table if not exists public.project_images (
   id uuid primary key default gen_random_uuid(),

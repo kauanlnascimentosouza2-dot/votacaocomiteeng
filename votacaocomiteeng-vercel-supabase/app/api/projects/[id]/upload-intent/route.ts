@@ -21,8 +21,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!fileName || !mimeType || !Number.isSafeInteger(fileSize) || fileSize < 1 || fileSize > MAX_SUBMISSION_FILE_SIZE) return NextResponse.json({ error: "Use DWG, DXF, PDF ou imagem de até 50 MB." }, { status: 400 });
   const { data: deliverable } = await access.admin.from("deliverables").select("id,is_final").eq("id", body.deliverableId ?? "").eq("demand_id", access.project.demand_id).maybeSingle();
   if (!deliverable) return NextResponse.json({ error: "Etapa inválida." }, { status: 400 });
-  if (deliverable.is_final && access.member?.role !== "leader" && !access.adminMode) return NextResponse.json({ error: "Somente o líder pode fazer a entrega final." }, { status: 403 });
-
   const path = `${access.project.group_id}/${id}/submissions/${randomUUID()}.${extension}`;
   const { data: intent, error: intentError } = await access.admin.from("project_upload_intents").insert({ project_id: id, deliverable_id: deliverable.id, group_id: access.project.group_id, user_id: user.id, storage_path: path, file_name: fileName, mime_type: mimeType, size_bytes: fileSize }).select("id").single();
   if (intentError || !intent) return NextResponse.json({ error: "Não foi possível preparar o envio. Confira se a atualização do banco foi executada." }, { status: 500 });
