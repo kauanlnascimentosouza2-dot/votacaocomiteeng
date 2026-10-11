@@ -24,9 +24,13 @@ export default async function HomePage({searchParams}:{searchParams:Promise<{vie
     semester?db.from('group_members').select('group_id').eq('semester_id',semester.id).eq('user_id',user.id).maybeSingle():Promise.resolve({data:null}),
     db.from('demand_group_members').select('demand_id,group_id').eq('user_id',user.id),
   ]);
+  const optionProjectIds=[...new Set((options??[]).map(option=>(option.projects as unknown as {id:string}).id))];
+  const {data:projectImages,error:imageError}=optionProjectIds.length
+    ?await readAllRows((a,b)=>db.from('project_images').select('project_id,image_url,position').in('project_id',optionProjectIds).order('project_id').order('position').range(a,b))
+    :{data:[],error:null};
   const {data:profiles}=view.isAdmin?await readAllRows((a,b)=>db.from('profiles').select('id,name,email').order('id').range(a,b)):{data:[]};
   const now=Date.now();
-  const loadError=Boolean(roundError||optionError||ballotError||participationError);
+  const loadError=Boolean(roundError||optionError||ballotError||participationError||imageError);
   const rows:RoundView[]=await Promise.all((loadError?[]:rounds??[]).map(async r=>{
     const closed=!['scheduled','open'].includes(r.status)||Boolean(r.ends_at&&Date.parse(r.ends_at)<=now)||r.demands.status==='closed'||r.demands.semester_id!==semester?.id;
     const my=(participation??[]).find(p=>p.round_id===r.id&&p.user_id===user.id);
@@ -35,7 +39,9 @@ export default async function HomePage({searchParams}:{searchParams:Promise<{vie
     return {id:r.id,title:r.demands.title,number:r.round_number,closed,startsAt:r.starts_at,endsAt:r.ends_at,published:Boolean(r.results_published_at),visibility:r.ballot_visibility,
       projects:await Promise.all((options??[]).filter(o=>o.round_id===r.id&&(view.isAdmin||((!r.starts_at||Date.parse(r.starts_at)<=now)&&(!closed||r.results_published_at)))).map(async o=>{
         const p=o.projects as unknown as {id:string;title:string;description:string;group_id:string;main_image_url:string|null;pdf_url:string|null;external_links:string[];groups:{name:string}|null};
-        return {id:p.id,title:p.title,description:p.description,group:p.groups?.name??'Grupo',image:await signedProjectFile(db,p.main_image_url),pdf:await signedProjectFile(db,p.pdf_url),links:p.external_links??[],blocked:p.group_id===membership?.group_id||(snapshots??[]).some(s=>s.demand_id===r.demand_id&&s.group_id===p.group_id),votes:showResults?(ballots??[]).filter(b=>b.round_id===r.id&&b.project_id===p.id).length:null};
+        const imagePaths=[p.main_image_url,...(projectImages??[]).filter(image=>image.project_id===p.id).map(image=>image.image_url)].filter((path):path is string=>Boolean(path));
+        const images=(await Promise.all([...new Set(imagePaths)].map(path=>signedProjectFile(db,path)))).filter((url):url is string=>Boolean(url));
+        return {id:p.id,title:p.title,description:p.description,group:p.groups?.name??'Grupo',images,pdf:await signedProjectFile(db,p.pdf_url),links:p.external_links??[],blocked:p.group_id===membership?.group_id||(snapshots??[]).some(s=>s.demand_id===r.demand_id&&s.group_id===p.group_id),votes:showResults?(ballots??[]).filter(b=>b.round_id===r.id&&b.project_id===p.id).length:null};
       })),myProject:myBallot?.project_id??null,changesUsed:my?.changes_used??0,
       participation:view.isAdmin?(participation??[]).filter(p=>p.round_id===r.id).map(p=>{const profile=(profiles??[]).find(x=>x.id===p.user_id);const ballot=(ballots??[]).find(b=>b.id===p.ballot_id);return {name:profile?.name||profile?.email||'Participante',projectId:r.ballot_visibility==='open'?ballot?.project_id??null:null};}):[],
     };

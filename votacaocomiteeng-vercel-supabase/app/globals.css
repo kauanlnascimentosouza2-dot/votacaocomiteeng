@@ -152,18 +152,45 @@ td span { margin-top:3px; color:var(--muted); font-size:.75rem; }
 .round-panel header { margin-bottom:20px; }
 .round-projects { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
 .round-project { overflow:hidden; border:1px solid #dbe3ea; border-radius:18px; }
-.round-project > div { padding:20px; display:flex; flex-direction:column; gap:12px; }
+.round-project > div:last-child { padding:20px; display:flex; flex-direction:column; gap:12px; }
 .round-project p { white-space:pre-wrap; overflow-wrap:anywhere; }
-.round-image { width:100%; padding:0; border:0; background:#edf2f7; cursor:zoom-in; }
+.round-gallery { background:#f8fafc; }
+.round-image { width:100%; padding:0; border:0; position:relative; display:block; background:#edf2f7; cursor:zoom-in; }
 .round-image img { width:100%; height:230px; object-fit:contain; display:block; }
+.round-image-count { position:absolute; top:10px; right:10px; padding:6px 9px; border-radius:999px; display:flex; align-items:center; gap:5px; color:#fff; background:#07192dcc; backdrop-filter:blur(7px); font-size:.68rem; font-weight:850; }
+.round-image-count svg { width:15px; height:15px; }
+.round-thumbnails { padding:8px; border-top:1px solid #dbe3ea; display:flex; gap:7px; overflow-x:auto; scrollbar-width:thin; }
+.round-thumbnails button { width:56px; height:44px; flex:0 0 auto; padding:0; border:2px solid transparent; border-radius:8px; overflow:hidden; background:#dce3ea; }
+.round-thumbnails button.active { border-color:var(--orange); box-shadow:0 0 0 1px #fff inset; }
+.round-thumbnails img { width:100%; height:100%; display:block; object-fit:cover; }
 .round-result { color:var(--navy); }
 .round-admin { margin-top:24px; border-top:1px solid #dbe3ea; padding-top:20px; }
 .round-admin details { margin-top:16px; }
 .round-admin summary { cursor:pointer; font-weight:750; }
 .legacy-round .danger-button { margin-left:12px; }
-.round-preview { position:fixed; inset:0; z-index:1500; background:#020617e8; display:flex; justify-content:center; align-items:center; padding:50px 20px; }
-.round-preview img { max-width:100%; max-height:90vh; object-fit:contain; }
-.round-preview button { position:absolute; top:15px; right:20px; border:0; background:white; border-radius:50%; padding:10px; }
+.round-preview { position:fixed; inset:0; z-index:1500; padding:54px 72px 28px; display:grid; place-items:center; background:#020617ed; backdrop-filter:blur(7px); }
+.round-preview-stage { width:min(1120px,100%); height:min(88vh,850px); min-height:0; position:relative; display:grid; grid-template-rows:minmax(0,1fr) auto auto; place-items:center; gap:11px; color:#fff; }
+.round-preview-stage>img { max-width:100%; max-height:100%; min-height:0; object-fit:contain; }
+.round-preview-close,.round-preview-prev,.round-preview-next { width:44px; height:44px; padding:0; border:1px solid #ffffff33; border-radius:999px; position:absolute; z-index:1; display:grid; place-items:center; color:#fff; background:#0f172ad9; box-shadow:0 8px 25px #0005; }
+.round-preview-close { top:-42px; right:-42px; }
+.round-preview-prev,.round-preview-next { top:43%; transform:translateY(-50%); }
+.round-preview-prev { left:-58px; }
+.round-preview-next { right:-58px; }
+.round-preview-caption { width:100%; display:flex; justify-content:center; align-items:center; gap:10px; font-size:.78rem; }
+.round-preview-caption span { color:#cbd5e1; }
+.round-preview-thumbnails { width:min(700px,100%); padding:5px 2px; display:flex; justify-content:center; gap:8px; overflow-x:auto; }
+.round-preview-thumbnails button { width:70px; height:52px; flex:0 0 auto; padding:0; border:2px solid transparent; border-radius:9px; overflow:hidden; opacity:.65; background:#172033; }
+.round-preview-thumbnails button.active { border-color:var(--orange); opacity:1; }
+.round-preview-thumbnails img { width:100%; height:100%; display:block; object-fit:cover; }
+@media (max-width:700px) {
+  .round-preview { padding:62px 12px 18px; }
+  .round-preview-stage { height:calc(100vh - 80px); }
+  .round-preview-close { top:-50px; right:0; }
+  .round-preview-prev { left:5px; }
+  .round-preview-next { right:5px; }
+  .round-preview-caption { flex-direction:column; gap:2px; }
+  .round-preview-thumbnails { justify-content:flex-start; }
+}
 .sidebar-guide { display:flex; align-items:center; gap:12px; margin:8px 14px; padding:12px; border:0; border-radius:12px; color:#b8c7d0; background:transparent; position:relative; }
 .sidebar-guide > span { display:none; }
 .app-sidebar.expanded .sidebar-guide > span,.app-sidebar.mobile-open .sidebar-guide > span { display:block; }
